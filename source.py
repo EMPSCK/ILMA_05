@@ -161,7 +161,7 @@ def kill():
         print(e)
         return -1
 
-
+kill()
 
 class Node:
     def __init__(self, key):

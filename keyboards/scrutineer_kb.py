@@ -13,7 +13,9 @@ async def gen_list_comp(tg_id):
 menu_button = [InlineKeyboardButton(text='Задать активное соревнование', callback_data='set_active_competition_for_S')]
 menu_button_01 = [InlineKeyboardButton(text='Редактировать параметры групп', callback_data='group_edit')]
 menu_button_02 = [InlineKeyboardButton(text='Редактировать параметры судей', callback_data='EditJudges')]
-menu_kb = InlineKeyboardMarkup(inline_keyboard=[menu_button, menu_button_01, menu_button_02])
+menu_button_03 = [InlineKeyboardButton(text='Редактировать параметры генерации', callback_data='EditGenParams')]
+menu_kb = InlineKeyboardMarkup(inline_keyboard=[menu_button, menu_button_01, menu_button_03, menu_button_02])
+
 
 confirm_choice_button_S = InlineKeyboardButton(text='Да', callback_data=f"confirm_choice_S")
 confirm_choice_button1_S = InlineKeyboardButton(text='Нет', callback_data=f"confirm_choice_back_S")

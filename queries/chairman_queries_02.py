@@ -982,3 +982,75 @@ async def changeGenerationRandom(user_id):
             return "✅Режим генерации изменен"
     except:
         return -1
+
+
+async def getGenertionInfo(user_id):
+    try:
+        active_comp = await general_queries.get_CompId(user_id)
+        conn = pymysql.connect(
+            host=config.host,
+            port=3306,
+            user=config.user,
+            password=config.password,
+            database=config.db_name,
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        with conn:
+            cur = conn.cursor()
+            cur.execute(f"select * from competition where compId = {active_comp}")
+            info = cur.fetchone()
+            generation_mode = info['generation_mode']
+            genertionRandomMode = info['generationRandomMode']
+            modeEncoder = {1:'сохранение списков гсс', 0:'отправка списков РСК'}
+            text = f'🗓Режим генерации: {modeEncoder[generation_mode]}\n📋Разброс по минимальным счетчикам судейств: {genertionRandomMode}'
+            return text
+    except Exception as e:
+        print(e)
+        return -1
+
+async def setGenerationRandom(user_id, param):
+    try:
+        active_comp = await general_queries.get_CompId(user_id)
+        conn = pymysql.connect(
+            host=config.host,
+            port=3306,
+            user=config.user,
+            password=config.password,
+            database=config.db_name,
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        with conn:
+            cur = conn.cursor()
+            cur.execute(f'update competition set generationRandomMode = {param} where compId = {active_comp}')
+            conn.commit()
+            return 1
+    except Exception as e:
+        print(e)
+        return -1
+
+async def setGenMode(user_id):
+    try:
+        active_comp = await general_queries.get_CompId(user_id)
+        conn = pymysql.connect(
+            host=config.host,
+            port=3306,
+            user=config.user,
+            password=config.password,
+            database=config.db_name,
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        with conn:
+            cur = conn.cursor()
+            cur.execute(f'select generation_mode from competition where compId = {active_comp}')
+            mode = cur.fetchone()
+            mode = mode['generation_mode']
+            if mode == 1:
+                cur.execute(f'update competition set generation_mode = 0 where compId = {active_comp}')
+                conn.commit()
+            else:
+                cur.execute(f'update competition set generation_mode = 1 where compId = {active_comp}')
+                conn.commit()
+            return 1
+    except Exception as e:
+        print(e)
+        return -1

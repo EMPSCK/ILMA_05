@@ -5,7 +5,6 @@ import pymysql
 
 
 async def get_ans(data):
-    print(data)
     json_end = dict()
     json_export = dict()
     group_list = []
@@ -517,6 +516,7 @@ async def judges_black_list_filter(all_judges_list, category_black_list):
 
 #функция генерирует случайного судью
 async def get_random_judge(group_all_judges_list, randomMode):
+    '''
     if randomMode == 1:
         new_dict = group_all_judges_list.copy()
         random_number = random.randint(0, len(new_dict.keys()) - 1)
@@ -532,11 +532,27 @@ async def get_random_judge(group_all_judges_list, randomMode):
         new_dict = group_all_judges_list.copy()
 
         for j in group_all_judges_list:
-            if group_all_judges_list[j]['group_counter'] > min_counter:
+            if group_all_judges_list[j]['group_counter'] > min_counter + randomMode:
                 new_dict.pop(j, None)
 
         random_number = random.randint(0, len(new_dict.keys()) - 1)
         return new_dict[list(new_dict.keys())[random_number]]
+    '''
+    min_counter = 10 ** 6
+    for i in group_all_judges_list:
+        a = group_all_judges_list[i]['group_counter']
+        if a < min_counter:
+            min_counter = a
+
+    new_dict = group_all_judges_list.copy()
+
+    for j in group_all_judges_list:
+        if group_all_judges_list[j]['group_counter'] > min_counter + randomMode:
+            new_dict.pop(j, None)
+
+    random_number = random.randint(0, len(new_dict.keys()) - 1)
+    return new_dict[list(new_dict.keys())[random_number]]
+
 
 
 async def getRandomMode(active_comp):

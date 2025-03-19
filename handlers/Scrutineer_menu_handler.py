@@ -158,15 +158,52 @@ async def cmd_start(message: types.Message):
 
 
 from queries import chairman_queries_02
-@router.message(Command("change_generation_random_mode"))
-async def cmd_start(message: types.Message):
-    user_status = await get_user_status_query.get_user_status(message.from_user.id)
-    if user_status == 3 or user_status == 2:
-        status = await chairman_queries_02.changeGenerationRandom(message.from_user.id)
-        if status != -1:
-            await message.answer(status)
+from keyboards import chairmans_kb
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import StatesGroup, State
+from aiogram.types import Message
+gen_edit_mes ={}
+
+class EditGenParams(StatesGroup):
+    firstState = State()
+
+@router.callback_query(F.data == 'EditGenParams')
+async def cmd_start(call: types.CallbackQuery, state: FSMContext):
+    await state.clear()
+    gen_edit_mes[call.from_user.id] = call.message
+    text = await chairman_queries_02.getGenertionInfo(call.from_user.id)
+    await call.message.edit_text(text, reply_markup=chairmans_kb.generation_menu_kb)
+
+
+@router.callback_query(F.data == 'changeGenRandom')
+async def cmd_start(call: types.CallbackQuery, state: FSMContext):
+    await state.clear()
+    await call.message.edit_text('📋<b>Введите новое значение параметра(число в диапазоне от 0 до 100):</b>\n\n0 - равномерное распределение количества судейств между доступными судьями, меньшая степень ротации.\n\n100 - максимальная степень ротации, не учитывает равномерность количества судейств.', reply_markup=chairmans_kb.genertionEditBack_kb, parse_mode='html')
+    await state.set_state(EditGenParams.firstState)
+
+
+@router.message(EditGenParams.firstState)
+async def f2(message: Message, state: FSMContext):
+    try:
+        param = message.text
+        oldmessage = gen_edit_mes[message.from_user.id]
+        if param.isdigit() and int(param) >= 0 and int(param) <= 100:
+            status = await chairman_queries_02.setGenerationRandom(message.from_user.id, param)
+            if status == 1:
+                text = await chairman_queries_02.getGenertionInfo(message.from_user.id)
+                await oldmessage.edit_text(text, reply_markup=chairmans_kb.generation_menu_kb)
+            else:
+                await oldmessage.edit_text('❌Ошибка', reply_markup=chairmans_kb.genertionEditBack_kb)
         else:
-            await message.answer('❌Ошибка')
-    else:
-        msg = await message.answer('❌Ошибка. Нет прав.')
-        await start_stage_handler.del_message_after_time(msg, config.expirate_message_timer)
+            await oldmessage.edit_text('❌Ошибка', reply_markup=chairmans_kb.genertionEditBack_kb)
+        await state.clear()
+        await message.delete()
+    except:
+        pass
+
+@router.callback_query(F.data == 'changeGenMode')
+async def cmd_start(call: types.CallbackQuery, state: FSMContext):
+    await state.clear()
+    await chairman_queries_02.setGenMode(call.from_user.id)
+    text = await chairman_queries_02.getGenertionInfo(call.from_user.id)
+    await call.message.edit_text(text, reply_markup=chairmans_kb.generation_menu_kb)

@@ -7,6 +7,7 @@ from handlers import Chairman_comm_handler
 from handlers import Chairman_comm_handler_02
 from handlers import Scrutineer_menu_handler
 from handlers import Admin_menu_handler
+from admin_moves import genertionRequestManager
 
 
 async def main():
@@ -19,8 +20,9 @@ async def main():
     dp.include_router(Chairman_comm_handler.router)
     dp.include_router(Chairman_comm_handler_02.router)
     #loop = asyncio.get_event_loop()
-    #loop.create_task(filemanager.filesmanager(bot))
+    #loop.create_task(genertionRequestManager.checkGenerationOrders())
     await dp.start_polling(bot)
+
 
 
 

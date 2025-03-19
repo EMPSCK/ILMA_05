@@ -171,7 +171,6 @@ async def update_ftsarr_judges_list(message: types.Message):
     /cleancounter - обнулить счетчик судейств в группах
     /change_generation_mode - изменить режим генерации списков бригад 
     /change_generation_zgs_mode - изменить режим генерации згс
-    /change_generation_random_mode - изменить режим генерации
     '''
     await message.answer(text_01, parse_mode='HTML')
 

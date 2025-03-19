@@ -54,7 +54,17 @@ menu_button = InlineKeyboardButton(text='Задать активное соре�
 menu_button_01 = InlineKeyboardButton(text='Ввести код', callback_data='enter_chairaman_pin')
 menu_button_02 = InlineKeyboardButton(text='Редактировать параметры групп', callback_data='group_edit')
 menu_button_03 = InlineKeyboardButton(text='Редактировать параметры судей', callback_data='EditJudges')
-menu_kb = InlineKeyboardMarkup(inline_keyboard=[[menu_button], [menu_button_02], [menu_button_03], [menu_button_01]])
+menu_button_04 = InlineKeyboardButton(text='Редактировать параметры генерации', callback_data='EditGenParams')
+menu_kb = InlineKeyboardMarkup(inline_keyboard=[[menu_button], [menu_button_02], [menu_button_03], [menu_button_04], [menu_button_01]])
+
+genertion_menu_button_01 = InlineKeyboardButton(text='Назад', callback_data='back_b')
+genertion_menu_button_02 = InlineKeyboardButton(text='Изменить разброс', callback_data='changeGenRandom')
+genertion_menu_button_03 = InlineKeyboardButton(text='Изменить режим', callback_data='changeGenMode')
+generation_menu_kb = InlineKeyboardMarkup(inline_keyboard=[[genertion_menu_button_02, genertion_menu_button_03], [genertion_menu_button_01]])
+
+genertion_menu_back_button = InlineKeyboardButton(text='Назад', callback_data='EditGenParams')
+genertionEditBack_kb = InlineKeyboardMarkup(inline_keyboard=[[genertion_menu_back_button]])
+
 
 back_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Вернуться к меню', callback_data='back_b')]])
 

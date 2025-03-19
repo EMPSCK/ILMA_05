@@ -65,9 +65,8 @@ async def CompId_to_name(id):
             decode = {0: 'по умолчанию', 1: 'повышенный'}
             secretMode = decode[secretMode]
             generationRandomMode = await generation_logic.getRandomMode(id)
-            gendecode = {1: 'случайное распределение', 0: "приоритет минимальным по счетчикам", -1: 'ошибка'}
-            gentext = gendecode[generationRandomMode]
-            return f"{name['compName']}\n{str(name['date1'])};{str(name['date2'])}|{name['city']}\n\n🗓Режим конфиденциальности: {secretMode}\n📋Режим генерации: {gentext}"
+            gentext = generationRandomMode
+            return f"{name['compName']}\n{str(name['date1'])};{str(name['date2'])}|{name['city']}\n\n🗓Режим конфиденциальности: {secretMode}"
 
     except Exception as e:
         print(e)
