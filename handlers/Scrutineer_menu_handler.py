@@ -172,13 +172,13 @@ async def cmd_start(call: types.CallbackQuery, state: FSMContext):
     await state.clear()
     gen_edit_mes[call.from_user.id] = call.message
     text = await chairman_queries_02.getGenertionInfo(call.from_user.id)
-    await call.message.edit_text(text, reply_markup=chairmans_kb.generation_menu_kb)
+    await call.message.edit_text(text, reply_markup=chairmans_kb.generation_menu_kb, parse_mode='html')
 
 
 @router.callback_query(F.data == 'changeGenRandom')
 async def cmd_start(call: types.CallbackQuery, state: FSMContext):
     await state.clear()
-    await call.message.edit_text('📋<b>Введите новое значение параметра(число в диапазоне от 0 до 100):</b>\n\n0 - равномерное распределение количества судейств между доступными судьями, меньшая степень ротации.\n\n100 - максимальная степень ротации, не учитывает равномерность количества судейств.', reply_markup=chairmans_kb.genertionEditBack_kb, parse_mode='html')
+    await call.message.edit_text('📋<b>Введите новое значение параметра:</b>', reply_markup=chairmans_kb.genertionEditBack_kb, parse_mode='html')
     await state.set_state(EditGenParams.firstState)
 
 
@@ -201,9 +201,10 @@ async def f2(message: Message, state: FSMContext):
     except:
         pass
 
+
 @router.callback_query(F.data == 'changeGenMode')
 async def cmd_start(call: types.CallbackQuery, state: FSMContext):
     await state.clear()
     await chairman_queries_02.setGenMode(call.from_user.id)
     text = await chairman_queries_02.getGenertionInfo(call.from_user.id)
-    await call.message.edit_text(text, reply_markup=chairmans_kb.generation_menu_kb)
+    await call.message.edit_text(text, reply_markup=chairmans_kb.generation_menu_kb, parse_mode='html')
