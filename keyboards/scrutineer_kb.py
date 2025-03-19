@@ -10,11 +10,11 @@ async def gen_list_comp(tg_id):
     list_comp_buttons.append([InlineKeyboardButton(text='Вернуться к меню', callback_data='back_to_scrutineer_menu')])
     return InlineKeyboardMarkup(inline_keyboard=list_comp_buttons)
 
-menu_button = [InlineKeyboardButton(text='Задать активное соревнование', callback_data='set_active_competition_for_S')]
-menu_button_01 = [InlineKeyboardButton(text='Редактировать параметры групп', callback_data='group_edit')]
-menu_button_02 = [InlineKeyboardButton(text='Редактировать параметры судей', callback_data='EditJudges')]
-menu_button_03 = [InlineKeyboardButton(text='Редактировать параметры генерации', callback_data='EditGenParams')]
-menu_kb = InlineKeyboardMarkup(inline_keyboard=[menu_button, menu_button_01, menu_button_03, menu_button_02])
+menu_button = InlineKeyboardButton(text='Соревнования', callback_data='set_active_competition_for_S')
+menu_button_01 = InlineKeyboardButton(text='Группы', callback_data='group_edit')
+menu_button_02 = InlineKeyboardButton(text='Судьи', callback_data='EditJudges')
+menu_button_03 = InlineKeyboardButton(text='Генерация', callback_data='EditGenParams')
+menu_kb = InlineKeyboardMarkup(inline_keyboard=[[menu_button, menu_button_02], [menu_button_01, menu_button_03]])
 
 
 confirm_choice_button_S = InlineKeyboardButton(text='Да', callback_data=f"confirm_choice_S")

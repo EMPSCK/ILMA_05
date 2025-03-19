@@ -50,12 +50,12 @@ book_number_button = [InlineKeyboardButton(text='Назад', callback_data='bac
 book_number_kb = InlineKeyboardMarkup(inline_keyboard=[book_number_button])
 
 
-menu_button = InlineKeyboardButton(text='Задать активное соревнование', callback_data='set_active_competition')
+menu_button = InlineKeyboardButton(text='Соревнования', callback_data='set_active_competition')
 menu_button_01 = InlineKeyboardButton(text='Ввести код', callback_data='enter_chairaman_pin')
-menu_button_02 = InlineKeyboardButton(text='Редактировать параметры групп', callback_data='group_edit')
-menu_button_03 = InlineKeyboardButton(text='Редактировать параметры судей', callback_data='EditJudges')
-menu_button_04 = InlineKeyboardButton(text='Редактировать параметры генерации', callback_data='EditGenParams')
-menu_kb = InlineKeyboardMarkup(inline_keyboard=[[menu_button], [menu_button_02], [menu_button_03], [menu_button_04], [menu_button_01]])
+menu_button_02 = InlineKeyboardButton(text='Группы', callback_data='group_edit')
+menu_button_03 = InlineKeyboardButton(text='Судьи', callback_data='EditJudges')
+menu_button_04 = InlineKeyboardButton(text='Генерация', callback_data='EditGenParams')
+menu_kb = InlineKeyboardMarkup(inline_keyboard=[[menu_button, menu_button_01], [menu_button_02,menu_button_03], [menu_button_04]])
 
 genertion_menu_button_01 = InlineKeyboardButton(text='Назад', callback_data='back_b')
 genertion_menu_button_02 = InlineKeyboardButton(text='Изменить разброс', callback_data='changeGenRandom')
