@@ -161,7 +161,7 @@ def kill():
         print(e)
         return -1
 
-kill()
+
 
 class Node:
     def __init__(self, key):
@@ -295,8 +295,3 @@ def f(a, b):
 
     return ans
 
-a = [[1, 2], [5, 3], [7, 1]]
-b = [[2, 3], [3, 4], [5, 6], [9, 2]]
-print(f(a, b))
-a = list(map(int, '15'.split(';')))
-print(a)

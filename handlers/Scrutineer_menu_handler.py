@@ -191,7 +191,7 @@ async def f2(message: Message, state: FSMContext):
             status = await chairman_queries_02.setGenerationRandom(message.from_user.id, param)
             if status == 1:
                 text = await chairman_queries_02.getGenertionInfo(message.from_user.id)
-                await oldmessage.edit_text(text, reply_markup=chairmans_kb.generation_menu_kb)
+                await oldmessage.edit_text(text, reply_markup=chairmans_kb.generation_menu_kb, parse_mode='html')
             else:
                 await oldmessage.edit_text('❌Ошибка', reply_markup=chairmans_kb.genertionEditBack_kb)
         else:
