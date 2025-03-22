@@ -630,6 +630,7 @@ async def ids_to_names(judges, active_comp):
 
 async def json_to_message(json_export, data):
     r = []
+
     for key in json_export:
         group_name = await get_group_name(data['compId'], key)
         if json_export[key]['status'] == 'success':

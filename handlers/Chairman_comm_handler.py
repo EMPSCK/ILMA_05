@@ -674,6 +674,8 @@ async def cmd_start(call: types.CallbackQuery):
         lastname = i[0]
         firstname = ' '.join(i[1::])
 
+    print(generation_results[call.from_user.id])
+    print()
     text = generation_results[call.from_user.id]['ans'].replace(chairmans_groups_lists[call.from_user.id]['name'][0], lastname + ' ' + firstname)
     generation_results[call.from_user.id]['ans'] = text
 
