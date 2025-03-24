@@ -229,13 +229,14 @@ async def save_generate_result_to_new_tables(user_id, data):
                 if data[groupnumber]['status'] != 'success':
                     continue
 
+                groupNumber = data[groupnumber]['group_number']
                 #Создаем запись в competition_group_crew
-                cur.execute(f"select * from competition_group where compId = {active_comp} and groupNumber = {groupnumber}")
+                cur.execute(f"select * from competition_group where compId = {active_comp} and groupNumber = {groupNumber}")
                 ans = cur.fetchone()
                 groupName = ans['groupName']
                 sql = "INSERT INTO competition_group_crew (`compId`, `groupNumber`, `roundName`) VALUES (%s, %s, %s)"
                 cur.execute(sql, (
-                    active_comp, groupnumber, groupName))
+                    active_comp, groupNumber, groupName))
                 conn.commit()
                 crew_id = cur.lastrowid
                 #Докидываем судей в competition_group_judges
@@ -281,18 +282,6 @@ async def save_generate_result_to_new_tables(user_id, data):
                     cur.execute(sql, (crew_id, 0, ident, lastname, firstname, judgeid, skateId))
                     conn.commit()
 
-                '''
-                for judIdIndex in range(len(lin_id)):
-                    info = await judgeId_to_name(lin_id[judIdIndex])
-                    lastname = info['lastName']
-                    firstname = info['firstName']
-                    skateId = info['skateId']
-                    ident = f'{ALPHABET[judIdIndex]}({judIdIndex + 1})'
-                    sql = "INSERT INTO competition_group_judges (`crewId`, `typeId`, `ident`, `lastName`, `firstName`, `judgeId`, `skateId`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-                    cur.execute(sql, (crew_id, 0, ident, lastname, firstname, lin_id[judIdIndex], skateId))
-                    conn.commit()
-                    
-                '''
     except Exception as e:
         print(e)
         return -1
@@ -503,7 +492,8 @@ async def sort_generate_list(json, user_id):
         with conn:
             cur = conn.cursor()
             for groupNumber in json:
-                cur.execute(f"select groupName from competition_group where compId = {compid} and groupNumber = {groupNumber}")
+                group_number = json[groupNumber]['group_number']
+                cur.execute(f"select groupName from competition_group where compId = {compid} and groupNumber = {group_number}")
                 groupName = cur.fetchone()
                 if groupName is None:
                     groupName = 'Группа'
@@ -534,9 +524,9 @@ async def sort_generate_list(json, user_id):
                 text_02.sort()
                 text_03.sort()
                 if len(text_03) != 0:
-                    text_01 = str(groupNumber) + '. ' + groupName + '.' + '\n' + f'Згс. {", ".join(text_03)}'+ "\n" + f'Линейные судьи: {", ".join(text_02)}'
+                    text_01 = str(group_number) + '. ' + groupName + '.' + '\n' + f'Згс. {", ".join(text_03)}'+ "\n" + f'Линейные судьи: {", ".join(text_02)}'
                 else:
-                    text_01 = str(groupNumber) + '. ' +  groupName + '.' + '\n' + f'Линейные судьи: {", ".join(text_02)}'
+                    text_01 = str(group_number) + '. ' +  groupName + '.' + '\n' + f'Линейные судьи: {", ".join(text_02)}'
                 text.append(text_01)
 
             r = "\n\n".join(text)

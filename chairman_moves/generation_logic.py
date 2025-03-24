@@ -5,21 +5,24 @@ import pymysql
 
 
 async def get_ans(data):
+    killV = 0
     json_end = dict()
     json_export = dict()
     group_list = []
 
     group_list_raw = data['groupList']
-    for group_id_inp in group_list_raw:
-        r = await get_group_params(data['compId'], group_id_inp)
 
+    for group_id_inp in group_list_raw:
+        killV -= 1
+
+        r = await get_group_params(data['compId'], group_id_inp)
         #Не нашли группу
         if r == "undefinedGroup":
             json_end['group_number'] = group_id_inp
             json_end['status'] = "fail"
             json_end['msg'] = 'группа не была обнаружена'
             json_end['judge_id'] = []
-            json_export[group_id_inp] = json_end
+            json_export[killV] = json_end
         else:
             group_list.append(r)
 
@@ -69,6 +72,7 @@ async def get_ans(data):
     randomMode = await getRandomMode(data['compId'])
 
     for i in group_list:
+        killV -= 1
         group_number = i[0]
         group_floor = i[5]
 
@@ -272,7 +276,7 @@ async def get_ans(data):
         if final_status > sucess_result_zgs: final_status = sucess_result_zgs
         result_dict = {0: "fail", 1: "success"}
         json_end['status'] = result_dict[final_status]
-        json_export[group_number] = json_end
+        json_export[killV] = json_end
 
 
     #json.loads(json.dumps(json_export))
@@ -630,22 +634,22 @@ async def ids_to_names(judges, active_comp):
 
 async def json_to_message(json_export, data):
     r = []
-
     for key in json_export:
-        group_name = await get_group_name(data['compId'], key)
+        groupNumber = json_export[key]['group_number']
+        group_name = await get_group_name(data['compId'], groupNumber)
         if json_export[key]['status'] == 'success':
             peoples = await ids_to_names(json_export[key]['lin_id'], data['compId'])
             zgs = await ids_to_names(json_export[key]['zgs_id'], data['compId'])
             text = f'{key}. {group_name}\nЗгс. {zgs}.\nЛинейные судьи: {peoples}.'
             if len(zgs) == 0:
-                text = f'{key}. {group_name}\nЛинейные судьи: {peoples}.'
+                text = f'{groupNumber}. {group_name}\nЛинейные судьи: {peoples}.'
             else:
-                text = f'{key}. {group_name}\nЗгс. {zgs}.\nЛинейные судьи: {peoples}.'
+                text = f'{groupNumber}. {group_name}\nЗгс. {zgs}.\nЛинейные судьи: {peoples}.'
 
             r.append(text)
 
         if json_export[key]['status'] == 'fail':
-            text = f'{key}. {group_name}\n{json_export[key]["msg"]}'
+            text = f'{groupNumber}. {group_name}\n{json_export[key]["msg"]}'
             r.append(text)
     text_01 = '\n\n'.join(r)
     return text_01

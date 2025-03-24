@@ -295,3 +295,9 @@ def f(a, b):
 
     return ans
 
+
+import re
+
+text = "Картинка <img src='bg.jpg'> в тексте</p>"
+match = re.findall(r"(src)\s*=\s*('.*')", text)
+print(match)

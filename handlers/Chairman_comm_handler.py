@@ -543,7 +543,11 @@ async def handle_text_message(message: types.Message):
 async def f4(callback: types.CallbackQuery):
     try:
         active_comp = chairmans_groups_lists[callback.from_user.id]['compId']
-        group_list = chairmans_groups_lists[callback.from_user.id]['json'].keys()
+        group_list = []
+        for key in chairmans_groups_lists[callback.from_user.id]['json']:
+            group_list.append(chairmans_groups_lists[callback.from_user.id]['json'][key]['group_number'])
+
+        #group_list = chairmans_groups_lists[callback.from_user.id]['json'].keys()
 
         if active_comp is None:
             return await callback.answer('❌Ошибка. Необходимо задать активный турнир')
@@ -594,6 +598,7 @@ async def f4(callback: types.CallbackQuery):
                         name = await chairman_queries.get_comment(callback.from_user.id)
                     else:
                         name = f'@{callback.from_user.username}'
+
                     await chairman_queries_02.save_generate_result_to_new_tables(callback.from_user.id, generation_results[callback.from_user.id]['json'])
                     new = await chairman_queries_02.sort_generate_list(generation_results[callback.from_user.id]['json'], callback.from_user.id)
                     if new != -1:
@@ -674,8 +679,7 @@ async def cmd_start(call: types.CallbackQuery):
         lastname = i[0]
         firstname = ' '.join(i[1::])
 
-    print(generation_results[call.from_user.id])
-    print()
+
     text = generation_results[call.from_user.id]['ans'].replace(chairmans_groups_lists[call.from_user.id]['name'][0], lastname + ' ' + firstname)
     generation_results[call.from_user.id]['ans'] = text
 
