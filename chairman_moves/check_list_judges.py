@@ -283,7 +283,10 @@ async def get_parse(text, user_id):
         database=config.db_name,
         cursorclass=pymysql.cursors.DictCursor
     )
-    text = text.replace('Линейный судьи', 'Линейные судьи')
+    #text = text.replace('Линейный судьи', 'Линейные судьи')
+    text = re.sub(r'Линейные\s+судья', 'Линейные судьи', text)
+    text = re.sub(r'Линейный\s+судьи', 'Линейные судьи', text)
+
     areas = re.split('\n\s{0,}\n', text)
     areas = [re.split('Гс.?\s{1,}|Згс.?\s{1,}|Линейные судьи\s{0,}.?\s{1,}', i) for i in areas]
     areas = [[i[j].strip().strip('\n').strip('.') for j in range(len(i))] for i in areas]
