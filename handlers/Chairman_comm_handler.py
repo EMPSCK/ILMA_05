@@ -136,7 +136,7 @@ async def f2(message: Message):
             if all(i == [] for i in linsets[message.from_user.id][2]):
                 await message.answer(
                     f"🤔{', '.join([i[0] + ' ' + i[1] for i in linsets[message.from_user.id][1]])}: не обнаружены в бд. Пожалуйста загрузите дополнительных судей через /judges или отредактируйте сообщение",
-                    reply_markup=chairmans_kb.edit_02_kb)
+                    reply_markup=chairmans_kb.edit_03_kb)
             else:
                 bank_for_edit_costyl[message.from_user.id] = [linsets[message.from_user.id][1], linsets[message.from_user.id][2]]
                 text = ''
@@ -487,6 +487,19 @@ async def f4(callback: types.CallbackQuery):
             await callback.message.answer('❌Ошибка, отправьте список еще раз')
         else:
             await callback.message.edit_text(callback.message.text + f'\n\n<b>Свободные судьи:</b> {a}', reply_markup=chairmans_kb.list_jud_send_kb, parse_mode='html')
+    except Exception as e:
+        print(e)
+        await callback.message.answer('❌Ошибка, отправьте список еще раз')
+
+
+@router.callback_query(F.data == 'show_free_judges_01')
+async def f4(callback: types.CallbackQuery):
+    try:
+        a = await chairman_queries.get_free_judges(callback.from_user.id)
+        if a == 0:
+            await callback.message.answer('❌Ошибка, отправьте список еще раз')
+        else:
+            await callback.message.edit_text(callback.message.text + f'\n\n<b>Свободные судьи:</b> {a}', reply_markup=chairmans_kb.edit_03_kb, parse_mode='html')
     except Exception as e:
         print(e)
         await callback.message.answer('❌Ошибка, отправьте список еще раз')

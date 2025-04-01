@@ -948,6 +948,7 @@ def kill():
         print(e)
         return -1
 
+
 from chairman_moves import generation_logic
 async def changeGenerationRandom(user_id):
     try:

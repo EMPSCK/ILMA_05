@@ -271,6 +271,7 @@ async def check_list(text, user_id):
 
 
 async def get_parse(text, user_id):
+    judges_use = []
     judges_problem = []
     judges_problem_db = []
     active_comp = await general_queries.get_CompId(user_id)
@@ -360,11 +361,12 @@ async def get_parse(text, user_id):
 
                     for people in peopls:
                         lastname, firstname = people
-                        st1 = cur.execute(f"SELECT firstName, lastName From competition_judges WHERE (lastName = '{lastname}' OR lastName2 = '{lastname}') AND CompId = {active_comp} AND active = 1")
+                        st1 = cur.execute(f"SELECT firstName, lastName, id From competition_judges WHERE (lastName = '{lastname}' OR lastName2 = '{lastname}') AND CompId = {active_comp} AND active = 1")
                         st1 = cur.fetchall()
                         if len(st1) == 1:
                             #text = text.replace(lastname + ' ' + firstname, st1[0]['lastName'] + ' ' + st1[0]['firstName'])
                             text = re.sub(rf'{lastname}\s+{firstname}', st1[0]['lastName'] + ' ' + st1[0]['firstName'],text)
+                            judges_use.append([lastname, firstname, st1[0]['id']])
                             continue
 
                         if cur.execute(
@@ -383,21 +385,23 @@ async def get_parse(text, user_id):
 
 
                 cur.execute(
-                    f"SELECT firstName, lastName From competition_judges WHERE lastName2 = '{lastname}' and firstName2 = '{firstname}' AND CompId = {active_comp} AND active = 1")
+                    f"SELECT firstName, lastName, id From competition_judges WHERE lastName2 = '{lastname}' and firstName2 = '{firstname}' AND CompId = {active_comp} AND active = 1")
 
                 st1 = cur.fetchall()
                 if len(st1) == 1:
                     #Заменить регуляркой
                     #text = text.replace(lastname + ' ' + firstname, st1[0]['lastName'] + ' ' + st1[0]['firstName'])
                     text = re.sub(rf'{lastname}\s+{firstname}', st1[0]['lastName'] + ' ' + st1[0]['firstName'], text)
+                    judges_use.append([st1[0]['lastName'], st1[0]['firstName'], st1[0]['id']])
                     continue
 
-                cur.execute( f"SELECT firstName, lastName From competition_judges WHERE lastName = '{lastname}' AND CompId = {active_comp} AND active = 1")
+                cur.execute( f"SELECT firstName, lastName, id From competition_judges WHERE lastName = '{lastname}' AND CompId = {active_comp} AND active = 1")
                 st1 = cur.fetchall()
                 if len(st1) == 1:
                     # Заменить регуляркой
                     #text = text.replace(lastname + ' ' + firstname, st1[0]['lastName'] + ' ' + st1[0]['firstName'])
                     text = re.sub(rf'{lastname}\s+{firstname}', st1[0]['lastName'] + ' ' + st1[0]['firstName'],text)
+                    judges_use.append([st1[0]['lastName'], st1[0]['firstName'], st1[0]['id']])
                     continue
 
                 if cur.execute(f"SELECT bookNumber FROM competition_judges WHERE firstName = '{firstname}' AND lastName = '{lastname}' AND compId = {active_comp} AND active = 1") == 0:
@@ -412,6 +416,8 @@ async def get_parse(text, user_id):
                     else:
                         if [lastname, firstname] not in judges_problem_db:
                             judges_problem_db.append([lastname, firstname])
+
+    config.judges_index[user_id] = judges_use
     return judges_problem, judges_problem_db, text
 
 

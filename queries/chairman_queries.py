@@ -112,7 +112,8 @@ async def get_free_judges(user_id):
         )
         with conn:
             cur = conn.cursor()
-            judges_use = config.judges_index[user_id]
+            #judges_use = config.judges_index[user_id]
+            judges_use = config.judges_index.get(user_id, [])
             cur.execute(f"SELECT * FROM competition_judges WHERE compId = {active_comp} AND is_use = 0 AND active = 1 ORDER BY lastName")
             judgesComp = cur.fetchall()
             cur.close()

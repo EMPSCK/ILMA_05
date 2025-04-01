@@ -85,9 +85,10 @@ update_status_b = [InlineKeyboardButton(text="Обновить статус", ca
 update_status_b_1 = [InlineKeyboardButton(text="Написать администратору", url='https://t.me/mitkrivich')]
 update_status_kb = InlineKeyboardMarkup(inline_keyboard=[update_status_b, update_status_b_1])
 
-edit_02_b = [InlineKeyboardButton(text="Редактировать", callback_data='edit_02')]
-edit_02_kb = InlineKeyboardMarkup(inline_keyboard=[edit_02_b])
-
+edit_02_b = InlineKeyboardButton(text="Редактировать", callback_data='edit_02')
+wrong_chek_01 = InlineKeyboardButton(text="Свободные судьи", callback_data='show_free_judges_01')
+edit_02_kb = InlineKeyboardMarkup(inline_keyboard=[[edit_02_b]])
+edit_03_kb = InlineKeyboardMarkup(inline_keyboard=[[wrong_chek_01]])
 
 async def get_markup_EV(user_id, text):
 
