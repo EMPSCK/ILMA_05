@@ -1042,12 +1042,10 @@ async def check_min_category(judgesO, jundesL, group_num, compId, area):
 
             if mincat is None:
                 mincat = 0
-                return 1
             else:
                 mincat = mincat['minCategoryId']
                 if mincat is None:
                     mincat = 0
-                    return 1
 
 
             #Проверка остальных на запреты
@@ -1089,9 +1087,12 @@ async def check_min_category(judgesO, jundesL, group_num, compId, area):
 
                 jud_cat = cur.fetchone()
                 jud_cat = jud_cat['DSFARR_Category_Id']
-                if jud_cat is None:
+                if jud_cat is None and mincat != 0:
                     ans.append(i + f': нет категории фтсарр\n')
                     continue
+
+                elif jud_cat is None:
+                    jud_cat = 0
 
                 if jud_cat < mincat:
                     cur.execute(f"SELECT categoryName from judges_category WHERE categoryId = {jud_cat}")
