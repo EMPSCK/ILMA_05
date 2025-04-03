@@ -558,7 +558,7 @@ async def get_edit_judges_params_mark(compId, user_id):
         with conn:
             cur = conn.cursor()
             cur.execute(
-                f"select firstName, lastName, id, workCode from competition_judges where compId = {compId}")
+                f"select firstName, lastName, id, workCode from competition_judges where compId = {compId} and active = 1")
             group_list = cur.fetchall()
             encoder = {0: 'ЛC.', 2:'ГС.', 1:'ЗГС.', 3:'СПУ.', 4:'ГСС.', 5:'ГСГСК.'}
             for j in range(len(group_list)):
