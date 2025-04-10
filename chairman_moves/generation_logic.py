@@ -20,7 +20,7 @@ async def get_ans(data):
         if r == "undefinedGroup":
             json_end['group_number'] = group_id_inp
             json_end['status'] = "fail"
-            json_end['msg'] = 'группа не была обнаружена'
+            json_end['msg'] = '❌Группа не была обнаружена'
             json_end['judge_id'] = []
             json_export[killV] = json_end
         else:
@@ -141,7 +141,7 @@ async def get_ans(data):
                     json_end['status'] = "fail"
                     json_end['judge_id'] = []
                     json_end['zgs_id'] = []
-                    json_end['msg'] = 'Не удалось сформировать бригаду с учетом заданных условий. Попробуйте уменьшить количество ЗГС'
+                    json_end['msg'] = '❌Не удалось сформировать бригаду с учетом заданных условий. Попробуйте уменьшить количество ЗГС'
                     break
             else:
                 json_end['group_number'] = group_number
@@ -164,7 +164,7 @@ async def get_ans(data):
                 json_end['status'] = "fail"
                 json_end['judge_id'] = []
                 json_end['zgs_id'] = []
-                json_end['msg'] = 'Не удалось сформировать бригаду с учетом заданных условий. Попробуйте уменьшить количество ЗГС'
+                json_end['msg'] = '❌Не удалось сформировать бригаду с учетом заданных условий. Попробуйте уменьшить количество ЗГС'
 
     # 3. начинаем работать с каждой группой из переданного списка
 
@@ -255,7 +255,7 @@ async def get_ans(data):
                     json_end['group_number'] = group_number
                     json_end['status'] = "fail"
                     json_end['judge_id'] = []
-                    json_end['msg'] = 'Не удалось сформировать бригаду с учетом заданных условий. Попробуйте сгенерирвать еще раз или уменьшить количество судей в бригаде.'
+                    json_end['msg'] = '❌Не удалось сформировать бригаду с учетом заданных условий. Попробуйте сгенерировать еще раз или уменьшить количество судей в бригаде.'
                     break
             else:
                 json_end['group_number'] = group_number
@@ -270,7 +270,7 @@ async def get_ans(data):
             json_end['group_number'] = group_number
             json_end['status'] = "fail"
             json_end['judge_id'] = []
-            json_end['msg'] = 'Не удалось сформировать бригаду с учетом заданных условий. Попробуйте сгенерирвать еще раз или уменьшить количество судей в бригаде'
+            json_end['msg'] = '❌Не удалось сформировать бригаду с учетом заданных условий. Попробуйте сгенерировать еще раз или уменьшить количество судей в бригаде'
 
         final_status = sucess_result
         if final_status > sucess_result_zgs: final_status = sucess_result_zgs
