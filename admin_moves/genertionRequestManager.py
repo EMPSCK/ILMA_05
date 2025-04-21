@@ -8,6 +8,7 @@ from chairman_moves import generation_logic
 from queries import chairman_queries_02
 import json
 
+
 async def checkGenerationOrders():
     try:
         while True:

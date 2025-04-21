@@ -33,6 +33,8 @@ async def cmd_start(message: Message, state: FSMContext):
         await message.answer(text, reply_markup=scrutineer_kb.menu_kb)
     if status == 3:
         await message.answer(text, reply_markup=chairmans_kb.menu_kb)
+    if status == 4:
+        await message.answer(text)
 
 
 @router.message(Command("id"))
@@ -50,6 +52,21 @@ async def cmd_start(callback: types.CallbackQuery):
 async def cmd_start(callback: types.CallbackQuery):
     await callback.message.edit_text(f'🗓Telegram_id: <code>{callback.from_user.id}</code>', reply_markup=scrutineer_kb.chairman_reg_mark, parse_mode='HTML')
     pass
+
+@router.callback_query(F.data == 'observer_role')
+async def cmd_start(callback: types.CallbackQuery):
+    await callback.message.edit_text(f'🤔<b>Подтвердите выбор</b>\n\nПосле подтверждения роль будет нельзя изменить', reply_markup=scrutineer_kb.observer_mark, parse_mode='HTML')
+    pass
+
+from queries import chairman_queries_02
+@router.callback_query(F.data == 'conf_observer_role')
+async def cmd_start(callback: types.CallbackQuery):
+    status = await chairman_queries_02.create_observer(callback.from_user.id)
+    if status == 1:
+        text, status = await get_cal_menu(callback)
+        await callback.message.edit_text(text)
+    else:
+        await callback.message.edit_text(f'❌Ошибка')
 
 
 class Chairman_reg_states(StatesGroup):
@@ -122,6 +139,8 @@ async def cmd_start(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.edit_text(text, reply_markup=scrutineer_kb.menu_kb)
     if status == 3:
         await callback.message.edit_text(text, reply_markup=chairmans_kb.menu_kb)
+    if status == 4:
+        await callback.message.edit_text(text)
 
 
 @router.message(Command("updateftsarrlist"))
@@ -200,6 +219,9 @@ async def get_cal_menu(callback: types.CallbackQuery):
     if user_status == 0:
         return "👋Добро пожаловать в интерфейс бота SS6\n\nДля начала работы необходимо пройти регистрацию в системе\nВыберите роль:", 0
 
+    if user_status == 4:
+        return f"👋Добро пожаловать в observer интерфейс бота SS6\n\n/help - список всех команд", 4
+
 async def get_mes_menu(message: Message):
     user_status = await get_user_status_query.get_user_status(message.from_user.id)
     #Админ
@@ -223,6 +245,8 @@ async def get_mes_menu(message: Message):
     if user_status == 0:
         return "👋Добро пожаловать в интерфейс бота SS6\n\nДля начала работы необходимо пройти регистрацию в системе\nВыберите роль:", 0
 
+    if user_status == 4:
+        return f"👋Добро пожаловать в observer интерфейс бота SS6\n\n/help - список всех команд", user_status
 
 async def del_message_after_time(message, time):
     await asyncio.sleep(time)

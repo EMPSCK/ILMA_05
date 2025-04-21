@@ -770,10 +770,10 @@ async def get_judges_list(json):
     for key in json:
         if json[key]['status'] == 'success':
             for i in json[key]['lin_id']:
-                ans[i] = [key, 'l', json[key]['lin_id']]
+                ans[i] = [json[key]['group_number'], 'l', json[key]['lin_id'], key]
 
             for i in json[key]['zgs_id']:
-                ans[i] = [key, 'z', json[key]['zgs_id']]
+                ans[i] = [json[key]['group_number'], 'z', json[key]['zgs_id'], key]
 
     return ans
 
@@ -1082,5 +1082,3 @@ async def regions_change_filter(all_judges, info, regions, compRegion):
                 if regions[jud_region] >= neibor:
                     all_judges_01.remove(jud)
     return all_judges_01
-
-

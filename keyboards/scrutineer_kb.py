@@ -23,13 +23,17 @@ confirm_choice_kb_S = load_judges_kb = InlineKeyboardMarkup(inline_keyboard=[[co
 
 chairman_b = InlineKeyboardButton(text='Chairman', callback_data=f"enter_chairaman_pin")
 scrutiner_b = InlineKeyboardButton(text='Scrutineer', callback_data=f"scrutiner_role")
-scrutiner_chairman_mark = InlineKeyboardMarkup(inline_keyboard=[[chairman_b, scrutiner_b]])
+observer_b = InlineKeyboardButton(text='Observer', callback_data=f"observer_role")
+scrutiner_chairman_mark = InlineKeyboardMarkup(inline_keyboard=[[chairman_b, scrutiner_b], [observer_b]])
 
 back_b = InlineKeyboardButton(text='Назад', callback_data=f"back_b")
 back_mark = InlineKeyboardMarkup(inline_keyboard=[[back_b]])
 
 pin_b = InlineKeyboardButton(text='Ввести код', callback_data=f"enter_chairaman_pin")
 chairman_reg_mark = InlineKeyboardMarkup(inline_keyboard=[[pin_b, back_b]])
+
+observer_b1 = InlineKeyboardButton(text='Подтвердить', callback_data=f"conf_observer_role")
+observer_mark = InlineKeyboardMarkup(inline_keyboard=[[back_b, observer_b1]])
 
 conf_data =InlineKeyboardButton(text='Подтвердить', callback_data=f"conf_chairman_data")
 reject_data =InlineKeyboardButton(text='Отклонить', callback_data=f"back_b")

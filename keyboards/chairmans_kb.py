@@ -150,7 +150,6 @@ async def get_gen_edit_markup(json):
         compid = json['compId']
         buttons = []
         but2 = []
-
         conn = pymysql.connect(
             host=config.host,
             port=3306,
@@ -214,12 +213,11 @@ async def edit_gen_judegs_markup(groupType, judgeId, judges, compId, json):
                 all_judges = await generation_logic.interdiction_filter(compId, judges[judgeId][0], all_judges)
 
 
-                pull = json[judges[judgeId][0]]['lin_id'] + json[judges[judgeId][0]]['zgs_id']
-
+                pull = json[judges[judgeId][3]]['lin_id'] + json[judges[judgeId][3]]['zgs_id']
                 pull.remove(judgeId)
                 all_judges = await generation_logic.relatives_filter(compId, all_judges, pull)
 
-                minCategoryId = await chairman_queries.get_min_catId(compId, judges[judgeId][0])
+                minCategoryId = await chairman_queries.get_min_catId(compId, judges[judgeId][3])
                 all_judges = await generation_logic.category_filter(all_judges, minCategoryId, compId, groupType, 'l')
 
 
@@ -270,7 +268,7 @@ async def edit_gen_judegs_markup(groupType, judgeId, judges, compId, json):
                 all_judges = await generation_logic.category_filter(all_judges, minCategoryId, compId, groupType, 'z')
 
 
-                pull = json[judges[judgeId][0]]['lin_id'] + json[judges[judgeId][0]]['zgs_id']
+                pull = json[judges[judgeId][3]]['lin_id'] + json[judges[judgeId][3]]['zgs_id']
                 pull.remove(judgeId)
                 all_judges = await generation_logic.relatives_filter(compId, all_judges, pull)
                 if groupType == 1:
