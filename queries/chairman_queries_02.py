@@ -1074,3 +1074,26 @@ async def create_observer(user_id):
                 return 1
     except:
         return 0
+
+
+async def numToName(num, user_id):
+    try:
+        active_comp = await general_queries.get_CompId(user_id)
+        conn = pymysql.connect(
+            host=config.host,
+            port=3306,
+            user=config.user,
+            password=config.password,
+            database=config.db_name,
+            cursorclass=pymysql.cursors.DictCursor
+        )
+        with conn:
+            cur = conn.cursor()
+            cur.execute(f"select lastName, firstName from competition_judges where numberId = {num} and compId = {active_comp}")
+            res = cur.fetchone()
+            if len(res) == 0:
+                return -1, []
+            else:
+                return 1, [res['lastName'], res['firstName']]
+    except:
+        return 0

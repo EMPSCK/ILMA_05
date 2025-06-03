@@ -59,6 +59,9 @@ async def check_list(text, user_id):
                 zgs = []
                 gs = []
                 #print(areas_02[areaindex])
+
+
+
                 if re.search('Гс.?\s{1,}', areas_02[areaindex]): have_gs = 1
                 if re.search('Згс.?\s{1,}', areas_02[areaindex]): have_zgs = 1
                 if 'Линейные' in areas_02[areaindex]: have_lin = 1
@@ -269,6 +272,13 @@ async def check_list(text, user_id):
         print(2, e)
         return (2, '', -1)
 
+async def parseStr(user_id, text, num):
+    status, result = await chairman_queries_02.numToName(int(num), user_id)
+    if status == -1:
+        return -1, ''
+    text = text[0:10] + text[10::].replace(str(num), result[0] + ' ' + result[1])
+    return 1, text
+
 
 async def get_parse(text, user_id):
     judges_use = []
@@ -319,9 +329,14 @@ async def get_parse(text, user_id):
                     lastname = k[0]
 
                 elif len(i.split()) == 1:
-                    lastname = re.search('^[А-ЯA-Z][а-яa-z]*', i)[0]
-                    firstname = i.replace(lastname, '')
-                    text = text.replace(lastname + firstname, lastname + ' ' + firstname)
+                    if i.isdigit():
+                        status1, text = await parseStr(user_id, text, int(i))
+                        if status1 == -1:
+                            return -1
+                    else:
+                        lastname = re.search('^[А-ЯA-Z][а-яa-z]*', i)[0]
+                        firstname = i.replace(lastname, '')
+                        text = text.replace(lastname + firstname, lastname + ' ' + firstname)
 
                 elif len(i.split()) > 2:
                     peopls = []
