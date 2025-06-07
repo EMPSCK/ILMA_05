@@ -228,7 +228,7 @@ async def get_ans(data):
                             'RegionId']] == n_jud_comp_region:  # если судья из "домашнего" региона и при его добавлении лимит для региона исчерпан
                             # ФУНКЦИЯ удаляем всех судей с таким же регионом
                             group_all_judges_list = await delete_region_from_judges(group_all_judges_list,
-                                                                              try_judge_data['RegionId'])
+                                                                               try_judge_data['RegionId'])
                         elif try_judge_data['RegionId'] != comp_region_id and regions[
                             try_judge_data['RegionId']] == n_jud_other_region:
                             # ФУНКЦИЯ удаляем всех судей с таким же регионом

@@ -109,7 +109,10 @@ async def pull_to_comp_group_jud(user_id, crew_id, area, have):
                 ans = await name_to_jud_id(lastname, firstname, active_comp)
                 judge_id = ans['id']
                 skateId = ans['skateId']
-                ident = f'{ALPHABET[judIndex]}({judIndex + 1})'
+                if i <= 25:
+                    ident = f'{ALPHABET[judIndex%26]}({judIndex + 1})'
+                else:
+                    ident = f'Z{ALPHABET[judIndex % 26]}({judIndex + 1})'
                 sql = "INSERT INTO competition_group_judges (`crewId`, `typeId`, `ident`, `lastName`, `firstName`, `judgeId`, `skateId`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
                 cur.execute(sql, (crew_id, 0, ident, lastname, firstname, judge_id, skateId))
                 conn.commit()
@@ -273,7 +276,10 @@ async def save_generate_result_to_new_tables(user_id, data):
 
                 lin_data.sort(key=lambda x: x['lastname'])
                 for i in range(len(lin_data)):
-                    ident = f'{ALPHABET[i]}({i + 1})'
+                    if i <= 25:
+                        ident = f'{ALPHABET[i]}({i + 1})'
+                    else:
+                        ident = f'Z{ALPHABET[i%26]}({i + 1})'
                     lastname = lin_data[i]['lastname']
                     firstname = lin_data[i]['firstname']
                     skateId = lin_data[i]['skateId']
