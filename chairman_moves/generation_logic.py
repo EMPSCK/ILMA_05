@@ -173,9 +173,11 @@ async def get_ans(data):
         и если это уже не первая группа и предыдущая была сгенерена успешно
         тогда из общего списка судей выкидываем всех кого нагенерили в панельки ранее
         """
+        foreign_jud_counter = 0
+        russian_judge_counter = 0
 
         # определяем параметры группы
-        n_judges, min_category, min_category_sport = i[1], i[2], i[6]
+        n_judges, min_category, min_category_sport, group_foreign_jud = i[1], i[2], i[6], i[7]
         if min_category is None:
             min_category = 0
 
@@ -186,14 +188,19 @@ async def get_ans(data):
         n_judges_category = 0
 
         # определяем условия на регионы судей
-        if i[3] == 0: # если группа не спортивная, проверяем регионы
+        if i[3] == 0: # если группа не спортивная РС А, проверяем регионы
             n_jud_comp_region, n_jud_other_region = await rc_a_region_rules(comp_region_id, n_judges)
+            group_foreign_jud = 0
         else:
             if i[3] == 1: #если группа спортивная, то ограничения на регионы нет, но надо проверить категории
                 n_jud_comp_region, n_jud_other_region = 10000, 10000
                 group_all_judges_list = await judges_category_date_filter(group_all_judges_list, data['compId'])
+                group_foreign_jud = 0
             else: #для РС В вообще пофиг
                 n_jud_comp_region, n_jud_other_region = 10000, 10000
+                #если иностранных не надо, то и не надо
+                if group_foreign_jud is None:
+                    group_foreign_jud = 0
 
         group_all_judges_list = await judges_category_filter(group_all_judges_list,
                                                        min_category, min_category_sport, i[3])  # 4. удаляем судей с неподходящей категорией
@@ -208,7 +215,6 @@ async def get_ans(data):
         #Удаляем из пула згс ребят
         group_all_judges_list = await judges_black_list_filter(group_all_judges_list,
                                                        zgs_end_list)
-
 
 
         if len(group_all_judges_list) >= n_judges:
@@ -236,6 +242,19 @@ async def get_ans(data):
                                                                               try_judge_data['RegionId'])
                     else:
                         regions[try_judge_data['RegionId']] = 1
+
+                    if group_foreign_jud != 0:
+                        if try_judge_data['numberId'] is not None:
+                            foreign_jud_counter += 1
+                            if foreign_jud_counter == group_foreign_jud:
+                                group_all_judges_list = await delete_foreign_judges(group_all_judges_list)
+                        else:
+                            russian_judge_counter += 1
+                            if russian_judge_counter == n_judges - group_foreign_jud:
+                                group_all_judges_list = await delete_russian_judges(group_all_judges_list)
+
+
+
 
                     # удалили всех с таким же клубом
                     group_all_judges_list = await delete_club_from_judges(group_all_judges_list, try_judge_data['Club'], try_judge_data['City'])
@@ -308,7 +327,7 @@ async def get_group_params(comp_id, group_id):
         with conn:
             cur = conn.cursor()
             cur.execute(
-                f'''SELECT groupNumber,judges, minCategoryId, sport, zgsNumber, floor, minCategorySportId
+                f'''SELECT groupNumber,judges, minCategoryId, sport, zgsNumber, floor, minCategorySportId, foreignJudgesNumbers
                  from competition_group
                  WHERE compId = {comp_id} and groupNumber = {group_id}
                                         ''')
@@ -322,7 +341,7 @@ async def get_group_params(comp_id, group_id):
                     data['minCategoryId'] = 0
                 if data['floor'] is None:
                     data['floor'] = 1
-                return data['groupNumber'], data['judges'], data['minCategoryId'], data['sport'], data['zgsNumber'], data['floor'], data['minCategorySportId']
+                return data['groupNumber'], data['judges'], data['minCategoryId'], data['sport'], data['zgsNumber'], data['floor'], data['minCategorySportId'], data['foreignJudgesNumbers']
     except Exception as e:
         print(e)
         return 0
@@ -434,7 +453,7 @@ async def get_all_judges_yana(compId):
         with conn:
             cur = conn.cursor()
             cur.execute(
-               f"SELECT id, lastName, firstName, SPORT_Category, RegionId, Club, bookNumber, group_counter, DSFARR_Category_Id, workCode, City, gender, floor, SPORT_Category_Id FROM competition_judges WHERE compId = {compId} and active = 1 and workCode <= 1")  # выбираем только активных на данный момент судей
+               f"SELECT id, lastName, firstName, SPORT_Category, RegionId, Club, bookNumber, group_counter, DSFARR_Category_Id, workCode, City, gender, floor, SPORT_Category_Id, numberId FROM competition_judges WHERE compId = {compId} and active = 1 and workCode <= 1")  # выбираем только активных на данный момент судей
             data = cur.fetchall()
             return data
 
@@ -740,7 +759,7 @@ async def check_category_date(judges, compId):
 
             return problem
     except Exception as e:
-        print(e, 1)
+        print(e)
         return -1
 
 
@@ -1081,4 +1100,18 @@ async def regions_change_filter(all_judges, info, regions, compRegion):
             else:
                 if regions[jud_region] >= neibor:
                     all_judges_01.remove(jud)
+    return all_judges_01
+
+async def delete_foreign_judges(all_judges):
+    all_judges_01 = all_judges.copy()
+    for jud in all_judges:
+        if all_judges[jud]['numberId'] is not None:
+            all_judges_01.pop(jud)
+    return all_judges_01
+
+async def delete_russian_judges(all_judges):
+    all_judges_01 = all_judges.copy()
+    for jud in all_judges:
+        if all_judges[jud]['numberId'] is None:
+            all_judges_01.pop(jud)
     return all_judges_01

@@ -129,7 +129,6 @@ async def check_list(text, user_id):
 
                     groupType = await chairman_queries.is_rc_a(group_num, active_comp)
 
-
                     k7 = await chairman_queries.check_min_category(otherjud, linjud, group_num, active_comp, area)
                     if k7 != 1:
                         flag7 = 1
