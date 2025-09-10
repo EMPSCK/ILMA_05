@@ -185,7 +185,8 @@ async def get_gen_edit_markup(json):
         print(e)
 
 from chairman_moves import generation_logic
-async def edit_gen_judegs_markup(groupType, judgeId, judges, compId, json):
+from handlers import Chairman_comm_handler
+async def edit_gen_judegs_markup(groupType, judgeId, judges, compId, json, judges_usage):
     try:
         buttons = []
         but2 = []
@@ -203,6 +204,14 @@ async def edit_gen_judegs_markup(groupType, judgeId, judges, compId, json):
             if judges[judgeId][1] == 'l':
                 cur.execute(f"SELECT firstName, lastName, id, DSFARR_Category_Id, SPORT_CategoryDate, SPORT_CategoryDateConfirm, SPORT_Category, RegionId, workCode, Birth, SPORT_Category_Id from competition_judges WHERE compId = {compId} and active = 1 and workCode <> 3 ")
                 all_judges = cur.fetchall()
+
+                all_judges_01 = []
+                a = set(judges_usage)
+                for el in all_judges:
+                    if el['id'] not in a:
+                        all_judges_01.append(el)
+                all_judges = all_judges_01
+
                 if len(all_judges) == 0:
                     but2.append(InlineKeyboardButton(text='Назад', callback_data=f"back_to_generation"))
                     buttons.append(but2)

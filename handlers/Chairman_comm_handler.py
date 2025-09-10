@@ -25,6 +25,7 @@ current_problem_jud_for_check_lin = {}
 bank_for_edit_costyl = {}
 chairmans_groups_lists = {}
 generation_results = {}
+reply_message_judges_id = {}
 
 #Обработка списка от CHAIRPERSON
 @router.message(F.text.lower().contains('судьи'))
@@ -518,18 +519,36 @@ class Is_Group_List(Filter):
 
 from handlers import start_stage_handler
 from keyboards import scrutineer_kb
+
+
 @router.message(Is_Group_List(F.text))
 async def handle_text_message(message: types.Message):
-    try:
-        group_list = [int(i.strip('\n').strip('.')) for i in message.text.split()]
+    active_comp = await general_queries.get_CompId(message.from_user.id)
+    flag = 0
+    if message.reply_to_message is not None:
+        original_message_text = message.reply_to_message.text
+        matches = re.findall(r'(\w+)\s+(\w+)', original_message_text)
+        judges_id_list = []
+        for match in matches:
+            last_name, first_name = list(match)
+            judgeId = await chairman_queries_02.name_to_jud_id(last_name, first_name, active_comp)
+            judgeId = judgeId['id']
+            if judgeId != -100:
+                judges_id_list.append(judgeId)
 
-        active_comp = await general_queries.get_CompId(message.from_user.id)
+        reply_message_judges_id[message.from_user.id] = judges_id_list
+        flag = 1
+    try:
+        if flag == 0:
+            reply_message_judges_id[message.from_user.id] = []
+
+        group_list = [int(i.strip('\n').strip('.')) for i in message.text.split()]
         regionId = await chairman_queries.get_regionId(active_comp)
 
         if active_comp is None:
             return await message.answer('❌Ошибка. Необходимо задать активный турнир')
 
-        data = {'compId': active_comp, "regionId": regionId, "status": 12, "groupList": group_list}
+        data = {'compId': active_comp, "regionId": regionId, "status": 12, "groupList": group_list, 'user_id': message.from_user.id}
         ans, json = await generation_logic.get_ans(data)
         id_to_group = await generation_logic.unpac_json(json)
         judges = await generation_logic.get_judges_list(json)
@@ -565,7 +584,7 @@ async def f4(callback: types.CallbackQuery):
         if active_comp is None:
             return await callback.answer('❌Ошибка. Необходимо задать активный турнир')
 
-        data = {'compId': active_comp, "regionId": 78, "status": 12, "groupList": group_list}
+        data = {'compId': active_comp, "regionId": 78, "status": 12, "groupList": group_list, 'user_id': callback.from_user.id}
         ans, json = await generation_logic.get_ans(data)
         id_to_group = await generation_logic.unpac_json(json)
         judges = await generation_logic.get_judges_list(json)
@@ -672,9 +691,10 @@ async def cmd_start(call: types.CallbackQuery):
     judges = generation_results[call.from_user.id]['judges']
     compId = generation_results[call.from_user.id]['compId']
     json = generation_results[call.from_user.id]['json']
+    judges_usage = reply_message_judges_id[call.from_user.id]
     #print(generation_results[call.from_user.id]['judges'])
 
-    markup = await chairmans_kb.edit_gen_judegs_markup(groupType, int(judgeId), judges, compId, json)
+    markup = await chairmans_kb.edit_gen_judegs_markup(groupType, int(judgeId), judges, compId, json, judges_usage)
 
     await call.message.edit_text('👨‍⚖️' + lastname + ' ' + firstname + "\n" + "\n" + "Выберите судью для замены:",
                                  reply_markup=markup)

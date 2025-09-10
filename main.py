@@ -1,16 +1,23 @@
-# This is a sample Python script.
+import re
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+text = """
+2. ВС Молодежь, Двоеборье
+Згс. Виноградов Владислав, Зайцева Елена.
+Линейные судьи: Акименко Вадим, Бавинов Тимофей, Давыдова Лариса, Имреков Евгений, Калиничева Каринэ, Карбаинов Михаил, Лисунов Владимир, Соломатина Ирина, Широких Лариса.
 
+1. ВС Взрослые, Двоеборье
+Згс. Кравец Алексей, Морозов Максим.
+Линейные судьи: Бисеров Александр, Васильева Марина, Завьялов Евгений, Кузюрина Любовь, Лебедев Александр, Мещеряков Евгений, Шеломицкий Владимир.
+"""
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# Используем regex для поиска имен и фамилий
+pattern = r'(\w+)\s+(\w+)'
+matches = re.findall(pattern, text)
 
+# Фильтруем и выводим только тех, кто указан в списке линейных судей
+judges_list = []
+for match in matches:
+    # Если оба элемента присутствуют (фамилия и имя), добавляем в итоговый список
+    judges_list.append(list(match))
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+print(judges_list)

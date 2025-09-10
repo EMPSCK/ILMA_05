@@ -2,7 +2,7 @@ import random
 import json
 import config
 import pymysql
-
+from handlers import Chairman_comm_handler
 
 async def get_ans(data):
     killV = 0
@@ -44,7 +44,7 @@ async def get_ans(data):
     group_list.sort(key=lambda x: x[2] * -1)
 
     # 2. запрашиваем и обрабатываем список судей
-    ans = await get_all_judges_yana(data['compId'])
+    ans = await get_all_judges_yana(data['compId'], data['user_id'])
     #print(relatives_list)
     #print(black_list)
     #print()
@@ -440,7 +440,7 @@ async def get_black_list(compId):
         print(e, 'get_black_list')
 
 
-async def get_all_judges_yana(compId):
+async def get_all_judges_yana(compId, user_id):
     try:
         conn = pymysql.connect(
             host=config.host,
@@ -455,7 +455,13 @@ async def get_all_judges_yana(compId):
             cur.execute(
                f"SELECT id, lastName, firstName, SPORT_Category, RegionId, Club, bookNumber, group_counter, DSFARR_Category_Id, workCode, City, gender, floor, SPORT_Category_Id, numberId FROM competition_judges WHERE compId = {compId} and active = 1 and workCode <= 1")  # выбираем только активных на данный момент судей
             data = cur.fetchall()
-            return data
+            data_01 = []
+            jusges_use = set(Chairman_comm_handler.reply_message_judges_id[user_id])
+            for el in data:
+                if el['id'] not in jusges_use:
+                    data_01.append((el))
+
+            return data_01
 
     except Exception as e:
         print(e)
@@ -1115,3 +1121,12 @@ async def delete_russian_judges(all_judges):
         if all_judges[jud]['numberId'] is None:
             all_judges_01.pop(jud)
     return all_judges_01
+
+
+async def judgeNameToId(lastname, firstnme):
+    id = -1
+
+
+    return id
+
+

@@ -47,9 +47,9 @@ def kill():
                 cur.execute(f"delete from competition where compId = {compId}")
                 conn.commit()
 
-
     except Exception as e:
         print(e)
         return -1
+
 
 kill()
